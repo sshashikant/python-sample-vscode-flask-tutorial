@@ -34,3 +34,22 @@ steps:
     pip install pytest pytest-azurepipelines
     pytest
   displayName: 'pytest'
+
+- script: |
+      pip install flake8 pylint
+      flake8 mypackage/
+      pylint mypackage/
+    displayName: 'Code Quality Analysis'
+
+- script: |
+    pip install coverage
+    coverage run -m pytest
+    coverage report -m
+  displayName: 'Code Coverage'
+
+- script: |
+    pip install twine
+    python setup.py sdist bdist_wheel
+    twine upload dist/*
+  displayName: 'Publish to PyPI'
+  condition: succeeded()  # Only publish if previous steps succeed
